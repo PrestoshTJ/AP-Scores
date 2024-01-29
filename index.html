@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="src/style.css" rel="stylesheet" type="text/css" />
+    <title>Document</title>
+</head>
+<body>
+    <div class = "load">
+        <div class = "loader"></div>
+    </div>
+
+    <div class = "cardHolder">
+
+    </div>
+
+</body>
+</html>
+<script>
+    let loader = document.querySelector(".load")
+    let counter = 0
+    const cardHolder = document.querySelector(".cardHolder")
+    function checkerf() {
+        document.body.removeChild(loader)
+
+        fetch("http://localhost:7003")
+            .then(response => {return response.json()})
+            .then(data => {
+                data.forEach(report => {
+                    cardMaker(report)
+                })
+            })
+            .catch(err => setTimeout(checkerf(),10000))
+
+    }
+
+
+    function cardMaker(report) {
+        let colorarr = ["linear-gradient(90deg, rgba(15,162,221,1) 3%, rgba(156,211,217,1) 100%)",
+        "linear-gradient(90deg, rgba(15,221,84,1) 3%, rgba(64,158,152,1) 100%)",
+    "linear-gradient(90deg, rgba(15,130,221,1) 3%, rgba(18,22,216,1) 48%, rgba(111,64,158,1) 100%)"]
+        if (counter > colorarr.length - 1) {
+            counter = 0
+        }
+        const card = document.createElement("div")
+        document.body.appendChild(card)
+        card.classList.add("Card")
+        card.style.background = colorarr[counter]
+                
+        const title = document.createElement("h1")
+        title.textContent = report.Class
+        const pic = document.createElement("img")
+        pic.src = "src/score.png"
+        pic.classList.add("Pic")
+        const score = document.createElement("h2")
+        score.textContent = report.Score
+        score.classList.add("Hide")
+                
+        card.appendChild(title)
+        card.appendChild(score)
+        card.appendChild(pic)
+                
+        const reveal = document.createElement("button")
+        reveal.textContent = "Reveal Score!"
+        reveal.addEventListener('click', function() {
+            score.classList.remove("Hide")
+            card.removeChild(reveal)
+        })
+        card.appendChild(reveal)
+        cardHolder.appendChild(card)
+        counter++
+    }
+    checkerf()
+
+    
+</script>
